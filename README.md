@@ -6,7 +6,7 @@ You can use this to draw graphics on Arduboy screen from a terminal software con
 
 ##Commands
 - print 
-++print string at the pen position
+- print string at the pen position
 - clear clear display
 - circle  draw a circle
 - fcircle draw a filled circle
