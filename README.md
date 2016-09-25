@@ -5,8 +5,8 @@ A command shell for Arduboy.
 You can use this to draw graphics on Arduboy screen from a terminal software connected to Arduboy's serial interface.
 
 ##Commands
-- print 
-- print string at the pen position
+- print
+...print string at the pen position
 - clear clear display
 - circle  draw a circle
 - fcircle draw a filled circle
