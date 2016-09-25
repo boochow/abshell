@@ -1,2 +1,2 @@
 # abshell
-a comman shell for arduboy
+a command shell for arduboy
