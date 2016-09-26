@@ -7,6 +7,8 @@ You can send commands from PC to Arduboy via USB port to draw graphics on Ardubo
 Any VT100 compatible serial port terminal softwares (PuTTY, etc.) can be used with abshell.
 
 ##Commands
+###syntax
+command arg1 arg2 arg3 ...
 ###graphics
 circle, fcircle, line, lineto, rect, frect, rrect, frrect, tri, ftri
 ###text
