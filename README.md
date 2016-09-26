@@ -1,6 +1,6 @@
 # abshell
 ##Description
-Abshell is a command shell for Arduboy based on [NT-shell](http://www.cubeatsystems.com/ntshell/index.html).
+Abshell is a command shell for Arduboy and is based on [NT-shell](http://www.cubeatsystems.com/ntshell/index.html).
 
 You can send commands from PC to Arduboy via USB port to draw graphics on Arduboy screen.
 
