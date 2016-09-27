@@ -79,6 +79,7 @@ static const cmd_table_t cmdlist[] = {
   { "lineto", desc_23, usrcmd_lineto },
   { "color", desc_24, usrcmd_color },
   { "keystat", desc_25, usrcmd_keystat },
+  { "pixels", desc_26, usrcmd_pixels },
   { "tone", desc_30, usrcmd_tone },
 };
 

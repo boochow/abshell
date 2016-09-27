@@ -37,6 +37,7 @@ int usrcmd_circle(int argc, char **argv) {
   uint8_t y = ntlibc_atoi(argv[2]);
   uint8_t r = ntlibc_atoi(argv[3]);
   DRAW_CIRCLE(x, y, r, pen_c);
+  return 0;
 }
 
 int usrcmd_fcircle(int argc, char **argv) {
@@ -48,6 +49,7 @@ int usrcmd_fcircle(int argc, char **argv) {
   uint8_t y = ntlibc_atoi(argv[2]);
   uint8_t r = ntlibc_atoi(argv[3]);
   FILL_CIRCLE(x, y, r, pen_c);
+  return 0;
 }
 
 int usrcmd_line(int argc, char **argv) {
@@ -62,6 +64,7 @@ int usrcmd_line(int argc, char **argv) {
   DRAW_LINE(x0, y0, x1, y1, pen_c);
   pen_x = x1;
   pen_y = y1;
+  return 0;
 }
 
 int usrcmd_rect(int argc, char **argv) {
@@ -74,6 +77,7 @@ int usrcmd_rect(int argc, char **argv) {
   uint8_t w = ntlibc_atoi(argv[3]);
   uint8_t h = ntlibc_atoi(argv[4]);
   DRAW_RECT(x, y, w, h, pen_c);
+  return 0;
 }
 
 int usrcmd_frect(int argc, char **argv) {
@@ -86,6 +90,7 @@ int usrcmd_frect(int argc, char **argv) {
   uint8_t w = ntlibc_atoi(argv[3]);
   uint8_t h = ntlibc_atoi(argv[4]);
   FILL_RECT(x, y, w, h, pen_c);
+  return 0;
 }
 
 int usrcmd_rrect(int argc, char **argv) {
@@ -99,6 +104,7 @@ int usrcmd_rrect(int argc, char **argv) {
   uint8_t h = ntlibc_atoi(argv[4]);
   uint8_t r = ntlibc_atoi(argv[5]);
   DRAW_RRECT(x, y, w, h, r, pen_c);
+  return 0;
 }
 
 int usrcmd_frrect(int argc, char **argv) {
@@ -112,6 +118,7 @@ int usrcmd_frrect(int argc, char **argv) {
   uint8_t h = ntlibc_atoi(argv[4]);
   uint8_t r = ntlibc_atoi(argv[5]);
   FILL_RRECT(x, y, w, h, r, pen_c);
+  return 0;
 }
 
 int usrcmd_tri(int argc, char **argv) {
@@ -126,6 +133,7 @@ int usrcmd_tri(int argc, char **argv) {
   uint8_t x2 = ntlibc_atoi(argv[5]);
   uint8_t y2 = ntlibc_atoi(argv[6]);
   DRAW_TRI(x0, y0, x1, y1, x2, y2, pen_c);
+  return 0;
 }
 
 int usrcmd_ftri(int argc, char **argv) {
@@ -140,6 +148,7 @@ int usrcmd_ftri(int argc, char **argv) {
   uint8_t x2 = ntlibc_atoi(argv[5]);
   uint8_t y2 = ntlibc_atoi(argv[6]);
   FILL_TRI(x0, y0, x1, y1, x2, y2, pen_c);
+  return 0;
 }
 
 int usrcmd_moveto(int argc, char **argv) {
@@ -153,6 +162,7 @@ int usrcmd_moveto(int argc, char **argv) {
   Serial.print(pen_x, DEC);
   Serial.print(" y:");
   Serial.println(pen_y, DEC);
+  return 0;
 }
 
 int usrcmd_tsize(int argc, char **argv) {
@@ -165,6 +175,7 @@ int usrcmd_tsize(int argc, char **argv) {
   G_TXT_SIZE(tsize);
   Serial.print("Text size:");
   Serial.println(tsize, DEC);
+  return 0;
 }
 
 int usrcmd_lineto(int argc, char **argv) {
@@ -177,6 +188,7 @@ int usrcmd_lineto(int argc, char **argv) {
   DRAW_LINE(pen_x, pen_y, x0, y0, pen_c);
   pen_x = x0;
   pen_y = y0;
+  return 0;
 }
 
 int usrcmd_color(int argc, char **argv) {
@@ -187,6 +199,7 @@ int usrcmd_color(int argc, char **argv) {
   pen_c = ntlibc_atoi(argv[1]);
   Serial.print("color:");
   Serial.println(pen_c, DEC);
+  return 0;
 }
 
 int usrcmd_keystat(int argc, char **argv) {
@@ -207,6 +220,7 @@ int usrcmd_keystat(int argc, char **argv) {
   Serial.print(" D:");
   Serial.print((KEY_PRESSED(DOWN_BUTTON) ? "1" : "0"));
   Serial.print("\r\n");
+  return 0;
 }
 
 int usrcmd_tone(int argc, char **argv) {
@@ -217,4 +231,20 @@ int usrcmd_tone(int argc, char **argv) {
   uint16_t f = ntlibc_atoi(argv[1]);
   uint16_t d = ntlibc_atoi(argv[2]);
   TONE(f, d);
+  return 0;
 }
+
+int usrcmd_pixels(int argc, char **argv) {
+  for(uint8_t i = 1; i < argc; i++) {
+    int8_t x = pen_x;
+    while(*argv[i] != 0)
+      if (*(argv[i]++) == '0') {
+        DRAW_PIXEL(x++, pen_y, BLACK);
+      } else {
+        DRAW_PIXEL(x++, pen_y, WHITE);
+      }
+    pen_y++;
+  }
+  return 0;
+}
+

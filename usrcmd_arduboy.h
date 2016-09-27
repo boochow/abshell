@@ -34,7 +34,7 @@ int usrcmd_tri(int argc, char **argv);
 const char desc_20[] PROGMEM = "draw a filled triangle";
 int usrcmd_ftri(int argc, char **argv);
 
-const char desc_21[] PROGMEM = "move the pen to (x, y)";
+const char desc_21[] PROGMEM = "set the pen location";
 int usrcmd_moveto(int argc, char **argv);
 
 const char desc_22[] PROGMEM = "set text size scale factor";
@@ -46,9 +46,14 @@ int usrcmd_lineto(int argc, char **argv);
 const char desc_24[] PROGMEM = "set pen color";
 int usrcmd_color(int argc, char **argv);
 
-const char desc_25[] PROGMEM = "read button status";
+const char desc_25[] PROGMEM = "read the status of buttons";
 int usrcmd_keystat(int argc, char **argv);
+
+const char desc_26[] PROGMEM = "set pixels on horizontal line";
+int usrcmd_pixels(int argc, char **argv);
 
 const char desc_30[] PROGMEM = "play a beep tone";
 int usrcmd_tone(int argc, char **argv);
+
+
 #endif
