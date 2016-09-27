@@ -10,7 +10,10 @@ extern "C" {
 static ntshell_t ntshell;
 
 static int func_read(char *buf, int cnt, void *extobj) {
-  return Serial.readBytes(buf, cnt);
+  if (Serial.available())
+    return Serial.readBytes(buf, cnt);
+  else
+    return 0;
 }
 
 static int func_write(const char *buf, int cnt, void *extobj) {
@@ -19,15 +22,15 @@ static int func_write(const char *buf, int cnt, void *extobj) {
 
 static int func_callback(const char *text, void *extobj) {
 #if 0
-    Serial.print("User input text:'");
-    Serial.print(text);
-    Serial.print("'\r\n");
+  Serial.print("User input text:'");
+  Serial.print(text);
+  Serial.print("'\r\n");
 #else
-    return usrcmd_execute(text);
+  return usrcmd_execute(text);
 #endif
 }
 
-boolean debug = false;
+static boolean debug = false;
 
 void setup() {
   arduboy.begin();
@@ -46,7 +49,7 @@ void setup() {
     func_write,
     func_callback,
     (void *)(&ntshell));
-    
+
   ntshell_set_prompt(&ntshell, PROMPTSTR);
   Serial.println("Welcome to Arduboy.\r\n type 'help' for help.");
   Serial.print(PROMPTSTR);
