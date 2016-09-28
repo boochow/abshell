@@ -57,11 +57,11 @@ void setup() {
 }
 
 void loop() {
-  if (!(arduboy.nextFrame()))
-    return;
-
   if (!debug)
     ntshell_execute_arduino(&ntshell);
+
+  if (!(arduboy.nextFrame()))
+    return;
 
   arduboy.display();
 }

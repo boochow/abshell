@@ -13,7 +13,7 @@ static uint8_t tsize = 1;
 int usrcmd_print(int argc, char **argv) {
   G_TXT_CURSOR(pen_x, pen_y);
   G_PRINT(argv[1]);
-  for(char i = 2 ; i < argc ; i++) {
+  for (char i = 2 ; i < argc ; i++) {
     G_PRINT(" ");
     G_PRINT(argv[i]);
   }
@@ -24,6 +24,9 @@ int usrcmd_print(int argc, char **argv) {
 int usrcmd_clear(int argc, char **argv) {
   pen_x = 0;
   pen_y = 0;
+  tsize = 1;
+  G_TXT_SIZE(tsize);
+  pen_c = WHITE;
   G_CLEAR();
   return 0;
 }
@@ -166,15 +169,18 @@ int usrcmd_moveto(int argc, char **argv) {
 }
 
 int usrcmd_tsize(int argc, char **argv) {
-  if (argc != 2) {
-    Serial.println(F("tsize number (1 is default)"));
-    return 0;
+  switch (argc) {
+    case 2:
+      tsize = ntlibc_atoi(argv[1]);
+      if (tsize == 0) tsize = 1;
+      G_TXT_SIZE(tsize);
+    case 1:
+      Serial.print("Text size:");
+      Serial.println(tsize, DEC);
+      break;
+    default:
+      Serial.println(F("tsize number (1 is default)"));
   }
-  tsize = ntlibc_atoi(argv[1]);
-  if (tsize == 0) tsize = 1;
-  G_TXT_SIZE(tsize);
-  Serial.print("Text size:");
-  Serial.println(tsize, DEC);
   return 0;
 }
 
@@ -235,9 +241,9 @@ int usrcmd_tone(int argc, char **argv) {
 }
 
 int usrcmd_pixels(int argc, char **argv) {
-  for(uint8_t i = 1; i < argc; i++) {
+  for (uint8_t i = 1; i < argc; i++) {
     int8_t x = pen_x;
-    while(*argv[i] != 0)
+    while (*argv[i] != 0)
       if (*(argv[i]++) == '0') {
         DRAW_PIXEL(x++, pen_y, BLACK);
       } else {
@@ -247,4 +253,5 @@ int usrcmd_pixels(int argc, char **argv) {
   }
   return 0;
 }
+
 
