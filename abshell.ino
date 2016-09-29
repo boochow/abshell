@@ -30,19 +30,16 @@ static int func_callback(const char *text, void *extobj) {
 #endif
 }
 
-static boolean debug = false;
-
 void setup() {
   arduboy.begin();
   arduboy.clear();
   arduboy.setFrameRate(SCRN_FPS);
 
-  if (KEY_PRESSED(A_BUTTON) && KEY_PRESSED(B_BUTTON)) {
-    G_PRINT("Debug Mode");
-    debug = true;
-    return;
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for Leonardo only
   }
-  Serial.begin(115200);
+
   ntshell_init(
     &ntshell,
     func_read,
@@ -57,8 +54,7 @@ void setup() {
 }
 
 void loop() {
-  if (!debug)
-    ntshell_execute_arduino(&ntshell);
+  ntshell_execute_arduino(&ntshell);
 
   if (!(arduboy.nextFrame()))
     return;
