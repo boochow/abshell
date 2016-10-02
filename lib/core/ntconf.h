@@ -41,7 +41,7 @@
 /**
  * @brief Maximum length for the editor module.
  */
-#define NTCONF_EDITOR_MAXLEN    (64)
+#define NTCONF_EDITOR_MAXLEN    (80)
 
 /**
  * @brief Maximum depth for the history module.
