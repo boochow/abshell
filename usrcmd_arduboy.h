@@ -80,7 +80,7 @@ const char desc_40[] PROGMEM = "set bitmap destination area";
 int usrcmd_bitmap(int argc, char **argv);
 
 const char cmd_41[] PROGMEM = ".x";
-const char desc_41[] PROGMEM = "raw data in hex string";
+const char desc_41[] PROGMEM = "send raw data in hex string";
 int usrcmd_x(int argc, char **argv);
 
 #endif
