@@ -34,7 +34,7 @@ void setup() {
   arduboy.begin();
   arduboy.setFrameRate(SCRN_FPS);
   G_TXT_CURSOR(0, 48);
-  G_PRINT(F("Waiting connection..."));
+  G_PRINT(F("open serial monitor !"));
   arduboy.display();
 
   Serial.begin(115200);
