@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "lib/core/ntconf.h"
 #include "lib/core/ntlibc.h"
 #include "usrcmd_arduboy.h"
 #include "globals.h"
@@ -9,6 +10,12 @@ static int16_t pen_x = 0;
 static int16_t pen_y = 0;
 static uint8_t pen_c = WHITE;
 static uint8_t tsize = 1;
+static uint8_t bmp_x = 0;
+static uint8_t bmp_y = 0;
+static uint8_t bmp_w = 128;
+static uint8_t bmp_h = 64;
+static uint8_t bmp_cur_x = bmp_x;
+static uint8_t bmp_cur_y = bmp_y;
 
 int usrcmd_print(int argc, char **argv) {
   G_TXT_CURSOR(pen_x, pen_y);
@@ -27,6 +34,12 @@ int usrcmd_clear(int argc, char **argv) {
   tsize = 1;
   G_TXT_SIZE(tsize);
   pen_c = WHITE;
+  bmp_x = 0;
+  bmp_y = 0;
+  bmp_w = 128;
+  bmp_h = 64;
+  bmp_cur_x = bmp_x;
+  bmp_cur_y = bmp_y;
   G_CLEAR();
   return 0;
 }
@@ -161,9 +174,10 @@ int usrcmd_moveto(int argc, char **argv) {
   }
   pen_x = ntlibc_atoi(argv[1]);
   pen_y = ntlibc_atoi(argv[2]);
-  Serial.print("pen x:");
+  G_TXT_CURSOR(pen_x, pen_y);
+  Serial.print(F("pen x:"));
   Serial.print(pen_x, DEC);
-  Serial.print(" y:");
+  Serial.print(F(" y:"));
   Serial.println(pen_y, DEC);
   return 0;
 }
@@ -175,7 +189,7 @@ int usrcmd_tsize(int argc, char **argv) {
       if (tsize == 0) tsize = 1;
       G_TXT_SIZE(tsize);
     case 1:
-      Serial.print("Text size:");
+      Serial.print(F("Text size:"));
       Serial.println(tsize, DEC);
       break;
     default:
@@ -203,7 +217,7 @@ int usrcmd_color(int argc, char **argv) {
     return 0;
   }
   pen_c = ntlibc_atoi(argv[1]);
-  Serial.print("color:");
+  Serial.print(F("color:"));
   Serial.println(pen_c, DEC);
   return 0;
 }
@@ -213,19 +227,19 @@ int usrcmd_keystat(int argc, char **argv) {
     Serial.println(F("keystatus requires no parameter"));
     return 0;
   }
-  Serial.print("A:");
+  Serial.print(F("A:"));
   Serial.print((KEY_PRESSED(A_BUTTON) ? "1" : "0"));
-  Serial.print(" B:");
+  Serial.print(F(" B:"));
   Serial.print((KEY_PRESSED(B_BUTTON) ? "1" : "0"));
-  Serial.print(" L:");
+  Serial.print(F(" L:"));
   Serial.print((KEY_PRESSED(LEFT_BUTTON) ? "1" : "0"));
-  Serial.print(" R:");
+  Serial.print(F(" R:"));
   Serial.print((KEY_PRESSED(RIGHT_BUTTON) ? "1" : "0"));
-  Serial.print(" U:");
+  Serial.print(F(" U:"));
   Serial.print((KEY_PRESSED(UP_BUTTON) ? "1" : "0"));
-  Serial.print(" D:");
+  Serial.print(F(" D:"));
   Serial.print((KEY_PRESSED(DOWN_BUTTON) ? "1" : "0"));
-  Serial.print("\r\n");
+  Serial.print(F("\r\n"));
   return 0;
 }
 
@@ -253,5 +267,119 @@ int usrcmd_pixels(int argc, char **argv) {
   }
   return 0;
 }
+
+void drawBitmap_sram(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t w, uint8_t h, uint8_t color)
+{
+  unsigned char *sBuffer = arduboy.getBuffer();
+  
+  if (x+w < 0 || x > WIDTH-1 || y+h < 0 || y > HEIGHT-1)
+    return;
+
+  int yOffset = abs(y) % 8;
+  int sRow = y / 8;
+  if (y < 0) {
+    sRow--;
+    yOffset = 8 - yOffset;
+  }
+  int rows = h/8;
+  if (h%8!=0) rows++;
+  for (int a = 0; a < rows; a++) {
+    int bRow = sRow + a;
+    if (bRow > (HEIGHT/8)-1) break;
+    if (bRow > -2) {
+      for (int iCol = 0; iCol<w; iCol++) {
+        if (iCol + x > (WIDTH-1)) break;
+        if (iCol + x >= 0) {
+          if (bRow >= 0) {
+            if      (color == WHITE) sBuffer[ (bRow*WIDTH) + x + iCol ] |= *(bitmap+(a*w)+iCol) << yOffset;
+            else if (color == BLACK) sBuffer[ (bRow*WIDTH) + x + iCol ] &= ~(*(bitmap+(a*w)+iCol) << yOffset);
+            else                     sBuffer[ (bRow*WIDTH) + x + iCol ] ^= *(bitmap+(a*w)+iCol) << yOffset;
+          }
+          if (yOffset && bRow<(HEIGHT/8)-1 && bRow > -2) {
+            if      (color == WHITE) sBuffer[ ((bRow+1)*WIDTH) + x + iCol ] |= *(bitmap+(a*w)+iCol) >> (8-yOffset);
+            else if (color == BLACK) sBuffer[ ((bRow+1)*WIDTH) + x + iCol ] &= ~(*(bitmap+(a*w)+iCol) >> (8-yOffset));
+            else                     sBuffer[ ((bRow+1)*WIDTH) + x + iCol ] ^= *(bitmap+(a*w)+iCol) >> (8-yOffset);
+          }
+        }
+      }
+    }
+  }
+}
+
+int usrcmd_bitmap(int argc, char **argv) {
+  if (argc == 1) {
+    Serial.print(bmp_x, DEC);Serial.print(' ');
+    Serial.print(bmp_y, DEC);Serial.print(' ');
+    Serial.print(bmp_w, DEC);Serial.print(' ');
+    Serial.println(bmp_h, DEC);
+  } else if (argc != 5) {
+    Serial.println(F("bitmap x y w h"));
+    return 0;
+  }
+  bmp_x = ntlibc_atoi(argv[1]);
+  bmp_y = ntlibc_atoi(argv[2]);
+  bmp_w = ntlibc_atoi(argv[3]);
+  bmp_h = ntlibc_atoi(argv[4]);
+  bmp_cur_x = bmp_x;
+  bmp_cur_y = bmp_y;
+  return 0;
+}
+
+uint8_t hex2num(char c) {
+  if ((c >= '0') && (c <= '9')) {
+    return c - '0';
+  } else if ((c >= 'A') && (c <= 'F')) {
+    return c - 'A' + 10;
+  } else
+    return 0;
+}
+
+int usrcmd_x(int argc, char **argv) {
+  if (argc != 2) {
+    Serial.println(F(".x hexstring"));
+    return 0;
+  }
+
+  static uint8_t buf[NTCONF_EDITOR_MAXLEN / 2];
+  uint8_t idx;
+  uint8_t c;
+  for(idx = 0 ; ((c = *argv[1]) != 0) && (idx < NTCONF_EDITOR_MAXLEN) ; argv[1]++) {
+    if (c == ',') continue;
+    c = ntlibc_toupper(c);
+    if (idx % 2) {
+      buf[idx / 2] |= hex2num(c);
+    } else {
+      buf[idx / 2] = (hex2num(c) << 4);
+    }
+    idx++;
+  }
+    
+  uint8_t right = bmp_cur_x + idx / 2;
+  uint8_t left = bmp_cur_x;
+  idx = 0;
+  while(left < right) {
+    uint8_t w = min(right - left, bmp_x + bmp_w - bmp_cur_x);
+    uint8_t h = min(8, bmp_y + bmp_h - bmp_cur_y);
+//    Serial.print(bmp_cur_x, DEC); Serial.print(" ");
+//    Serial.print(bmp_cur_y, DEC); Serial.print(" ");
+//    Serial.print(w, DEC); Serial.print(" ");
+//    Serial.print(h, DEC); Serial.print(" ");
+//    Serial.print(left, DEC); Serial.print(" ");
+//    Serial.print(right, DEC); Serial.println(" ");
+    drawBitmap_sram(bmp_cur_x, bmp_cur_y, &buf[idx], w, h, pen_c);
+    left += w;
+    idx += w;
+    bmp_cur_x += w;
+    if (bmp_cur_x >= bmp_x + bmp_w) {
+      bmp_cur_x = bmp_x;
+      bmp_cur_y += h;
+      if (bmp_cur_y >= bmp_y + bmp_h) {
+        bmp_cur_y = bmp_y;
+      }
+    }
+  }
+  return 0;
+}
+
 
 

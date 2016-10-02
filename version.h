@@ -1,3 +1,3 @@
-#define SYSINFOSTR "Arduboy Monitor\r\n"
-#define VERSIONSTR "1.1 September 28, 2016\r\n"
+#define SYSINFOSTR F("Arduboy Monitor\r\n")
+#define VERSIONSTR F("1.1 October 2, 2016\r\n")
 

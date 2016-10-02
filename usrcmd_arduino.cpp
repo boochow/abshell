@@ -51,36 +51,40 @@ static int usrcmd_ntopt_callback(int argc, char **argv, void *extobj);
 static int usrcmd_help(int argc, char **argv);
 static int usrcmd_info(int argc, char **argv);
 
+const char cmd_0[] PROGMEM = "help";
 const char desc_0[] PROGMEM = "show help";
+const char cmd_1[] PROGMEM = "info";
 const char desc_1[] PROGMEM = "show info";
 
 typedef struct {
-  char *cmd;
+  PROGMEM const char *cmd;
   PROGMEM const char *desc;
   USRCMDFUNC func;
 } cmd_table_t;
 
 static const cmd_table_t cmdlist[] = {
-  { "help", desc_0, usrcmd_help },
-  { "info", desc_1, usrcmd_info },
-  { "print", desc_10, usrcmd_print },
-  { "clear", desc_11, usrcmd_clear },
-  { "circle", desc_12, usrcmd_circle },
-  { "fcircle", desc_13, usrcmd_fcircle },
-  { "line", desc_14, usrcmd_line },
-  { "rect", desc_15, usrcmd_rect },
-  { "frect", desc_16, usrcmd_frect },
-  { "rrect", desc_17, usrcmd_rrect },
-  { "frrect", desc_18, usrcmd_frrect },
-  { "tri", desc_19, usrcmd_tri },
-  { "ftri", desc_20, usrcmd_ftri },
-  { "moveto", desc_21, usrcmd_moveto },
-  { "tsize", desc_22, usrcmd_tsize },
-  { "lineto", desc_23, usrcmd_lineto },
-  { "color", desc_24, usrcmd_color },
-  { "keystat", desc_25, usrcmd_keystat },
-  { "pixels", desc_26, usrcmd_pixels },
-  { "tone", desc_30, usrcmd_tone },
+  { cmd_0, desc_0, usrcmd_help },
+  { cmd_1, desc_1, usrcmd_info },
+  { cmd_10, desc_10, usrcmd_print },
+  { cmd_11, desc_11, usrcmd_clear },
+  { cmd_12, desc_12, usrcmd_circle },
+  { cmd_13, desc_13, usrcmd_fcircle },
+  { cmd_14, desc_14, usrcmd_line },
+  { cmd_15, desc_15, usrcmd_rect },
+  { cmd_16, desc_16, usrcmd_frect },
+  { cmd_17, desc_17, usrcmd_rrect },
+  { cmd_18, desc_18, usrcmd_frrect },
+  { cmd_19, desc_19, usrcmd_tri },
+  { cmd_20, desc_20, usrcmd_ftri },
+  { cmd_21, desc_21, usrcmd_moveto },
+  { cmd_22, desc_22, usrcmd_tsize },
+  { cmd_23, desc_23, usrcmd_lineto },
+  { cmd_24, desc_24, usrcmd_color },
+  { cmd_25, desc_25, usrcmd_keystat },
+  { cmd_26, desc_26, usrcmd_pixels },
+  { cmd_30, desc_30, usrcmd_tone },
+  { cmd_40, desc_40, usrcmd_bitmap },
+  { cmd_41, desc_41, usrcmd_x },
 };
 
 int usrcmd_execute(const char *text)
@@ -93,14 +97,17 @@ static int usrcmd_ntopt_callback(int argc, char **argv, void *extobj)
   if (argc == 0) {
     return 0;
   }
-  const cmd_table_t *p = &cmdlist[0];
+  cmd_table_t *p;
+  char cmd[MAX_CMD_LEN];
+  p = (cmd_table_t *) &cmdlist[0];
   for (int i = 0; i < sizeof(cmdlist) / sizeof(cmdlist[0]); i++) {
-    if (ntlibc_strcmp((const char *)argv[0], p->cmd) == 0) {
+    strcpy_P(cmd, p->cmd);
+    if (ntlibc_strcmp((const char *)argv[0], cmd) == 0) {
       return p->func(argc, argv);
     }
     p++;
   }
-  uart_puts("Unknown command found.\r\n");
+  uart_puts(F("Unknown command\r\n"));
   Serial.flush();
   return 0;
 }
@@ -109,7 +116,7 @@ static int usrcmd_help(int argc, char **argv)
 {
   const cmd_table_t *p = &cmdlist[0];
   for (int i = 0; i < sizeof(cmdlist) / sizeof(cmdlist[0]); i++) {
-    uart_puts(p->cmd);
+    pgm_print(p->cmd);
     uart_puts("\t:");
     pgm_print(p->desc);
     uart_puts("\r\n");
@@ -122,8 +129,8 @@ static int usrcmd_help(int argc, char **argv)
 static int usrcmd_info(int argc, char **argv)
 {
   if (argc != 2) {
-    uart_puts("info sys\r\n");
-    uart_puts("info ver\r\n");
+    uart_puts(F("info sys\r\n"));
+    uart_puts(F("info ver\r\n"));
     return 0;
   }
   if (ntlibc_strcmp(argv[1], "sys") == 0) {

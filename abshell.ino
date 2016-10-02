@@ -32,13 +32,17 @@ static int func_callback(const char *text, void *extobj) {
 
 void setup() {
   arduboy.begin();
-  arduboy.clear();
   arduboy.setFrameRate(SCRN_FPS);
+  G_TXT_CURSOR(0, 48);
+  G_PRINT(F("open serial monitor !"));
+  arduboy.display();
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
+
+  arduboy.clear();
 
   ntshell_init(
     &ntshell,
@@ -48,13 +52,14 @@ void setup() {
     (void *)(&ntshell));
 
   ntshell_set_prompt(&ntshell, PROMPTSTR);
-  Serial.println("Welcome to Arduboy.\r\n type 'help' for help.");
+  Serial.println(F("Welcome to Arduboy.\r\n type 'help' for help."));
   Serial.print(PROMPTSTR);
   Serial.flush();
 }
 
 void loop() {
-  ntshell_execute_arduino(&ntshell);
+  while(Serial.available())
+    ntshell_execute_arduino(&ntshell);
 
   if (!(arduboy.nextFrame()))
     return;
