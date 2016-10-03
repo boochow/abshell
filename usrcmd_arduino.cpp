@@ -62,7 +62,7 @@ typedef struct {
   USRCMDFUNC func;
 } cmd_table_t;
 
-static const cmd_table_t cmdlist[] = {
+static const cmd_table_t cmdlist[] PROGMEM = {
   { cmd_0, desc_0, usrcmd_help },
   { cmd_1, desc_1, usrcmd_info },
   { cmd_10, desc_10, usrcmd_print },
@@ -101,9 +101,11 @@ static int usrcmd_ntopt_callback(int argc, char **argv, void *extobj)
   char cmd[MAX_CMD_LEN];
   p = (cmd_table_t *) &cmdlist[0];
   for (int i = 0; i < sizeof(cmdlist) / sizeof(cmdlist[0]); i++) {
-    strcpy_P(cmd, p->cmd);
+    char *pcmd = pgm_read_word(&((*p).cmd));
+    USRCMDFUNC pfunc = pgm_read_word(&((*p).func));
+    strcpy_P(cmd, pcmd);
     if (ntlibc_strcmp((const char *)argv[0], cmd) == 0) {
-      return p->func(argc, argv);
+      return (*pfunc)(argc, argv);
     }
     p++;
   }
@@ -116,9 +118,11 @@ static int usrcmd_help(int argc, char **argv)
 {
   const cmd_table_t *p = &cmdlist[0];
   for (int i = 0; i < sizeof(cmdlist) / sizeof(cmdlist[0]); i++) {
-    pgm_print(p->cmd);
+    char *pcmd = pgm_read_word(&((*p).cmd));
+    char *pdesc = pgm_read_word(&((*p).desc));
+    pgm_print(pcmd);
     uart_puts("\t:");
-    pgm_print(p->desc);
+    pgm_print(pdesc);
     uart_puts("\r\n");
     p++;
   }
