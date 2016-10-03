@@ -30,8 +30,8 @@
    OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "lib/util/ntopt.h"
-#include "lib/core/ntlibc.h"
+#include "ntopt.h"
+#include "ntlibc.h"
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include "version.h"

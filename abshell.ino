@@ -1,5 +1,5 @@
 #include "globals.h"
-#include "lib/core/ntshell.h"
+#include "ntshell.h"
 extern "C" {
 #include "ntshell_arduino.h"
 }

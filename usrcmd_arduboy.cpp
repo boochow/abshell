@@ -1,6 +1,6 @@
 #include "globals.h"
-#include "lib/core/ntconf.h"
-#include "lib/core/ntlibc.h"
+#include "ntconf.h"
+#include "ntlibc.h"
 #include "usrcmd_arduboy.h"
 #include "globals.h"
 
