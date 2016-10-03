@@ -2632,7 +2632,7 @@ static const state_table_t table[] =  {
 };
 #endif
 
-static const vtrecv_action_t ENTRY_ACTIONS[] = {
+static const vtrecv_action_t ENTRY_ACTIONS[] PROGMEM = {
    VTRECV_ACTION_CLEAR, /* CSI_ENTRY */
    0  /* none for CSI_IGNORE */,
    0  /* none for CSI_INTERMEDIATE */,
@@ -2649,7 +2649,7 @@ static const vtrecv_action_t ENTRY_ACTIONS[] = {
    0  /* none for SOS_PM_APC_STRING */,
 };
 
-static const vtrecv_action_t EXIT_ACTIONS[] = {
+static const vtrecv_action_t EXIT_ACTIONS[] PROGMEM = {
    0  /* none for CSI_ENTRY */,
    0  /* none for CSI_IGNORE */,
    0  /* none for CSI_INTERMEDIATE */,
@@ -2711,12 +2711,12 @@ state_change_t GET_STATE_TABLE(const int state, const int ch)
 
 vtrecv_action_t GET_ENTRY_ACTIONS(const int state)
 {
-    return ENTRY_ACTIONS[state];
+    return pgm_read_byte(&ENTRY_ACTIONS[state]);
 }
 
 vtrecv_action_t GET_EXIT_ACTIONS(const int state)
 {
-    return EXIT_ACTIONS[state];
+    return pgm_read_byte(&EXIT_ACTIONS[state]);
 }
 
 void vtrecv_init(vtrecv_t *parser, vtrecv_callback_t cb)

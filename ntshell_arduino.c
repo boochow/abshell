@@ -1,6 +1,6 @@
-#include "lib/core/ntshell.h"
-#include "lib/util/ntopt.h"
-#include "lib/core/ntlibc.h"
+#include "ntshell.h"
+#include "ntopt.h"
+#include "ntlibc.h"
 
 #define INITCODE    (0x4367)
 #define SERIAL_READ(HANDLE, BUF, CNT)   ((HANDLE)->func_read(BUF, CNT, (HANDLE)->extobj))

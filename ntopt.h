@@ -1,5 +1,5 @@
 /**
- * @file ntconf.h
+ * @file ntopt.h
  * @author CuBeatSystems
  * @author Shinichiro Nakamura
  * @copyright
@@ -30,23 +30,41 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef NTCONF_H
-#define NTCONF_H
+#ifndef NTOPT_H
+#define NTOPT_H
+
+#include "ntconf.h"
 
 /**
- * @note
- * This file provides internal definitions for inner modules.
+ * @brief The text maximum length.
  */
+#define NTOPT_TEXT_MAXLEN   (NTCONF_EDITOR_MAXLEN)
 
 /**
- * @brief Maximum length for the editor module.
+ * @brief The text maximum arguments.
  */
-#define NTCONF_EDITOR_MAXLEN    (80)
+#define NTOPT_TEXT_MAXARGS  (NTCONF_EDITOR_MAXLEN / 2)
 
 /**
- * @brief Maximum depth for the history module.
+ * @brief The callback function.
+ *
+ * @param argc The number of the parameters.
+ * @param argv The pointer to the parameters.
+ * @param extobj The external object.
+ *
+ * @return A return value.
  */
-#define NTCONF_HISTORY_DEPTH    (1)
+typedef int (*NTOPT_CALLBACK)(int argc, char **argv, void *extobj);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int ntopt_parse(const char *str, NTOPT_CALLBACK func, void *extobj);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
