@@ -1,5 +1,5 @@
 # abshell
-##Description
+## Description
 Abshell is a command shell for Arduboy.
 You can send commands from PC to Arduboy via USB-serial port.
 
@@ -9,21 +9,21 @@ The core of shell interpreter uses Shinichiro Nakamura's [NT-shell](http://www.c
 
 Any VT100 compatible serial port terminal softwares ([PuTTY](http://www.putty.org/), etc.) can be used with abshell.
 
-##Commands
-###syntax
+## Commands
+### syntax
 command arg1 arg2 arg3 ...
-###graphics commands
+### graphics commands
 circle, fcircle, line, lineto, rect, frect, rrect, frrect, tri, ftri
-###text commands
+### text commands
 print, tsize
-###bitmap commands
+### bitmap commands
 pixels, bitmap, .x
-###other graphics-related commands
+### other graphics-related commands
 moveto, color, clear
-###miscellaneous
+### miscellaneous
 keystat, tone, help, info
 
-##example
+## example
 
 print hello,world!
 
